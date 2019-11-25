@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <typeinfo>
+#include <type_traits>
 #include <memory>
 
 using std::cin;
@@ -64,6 +65,7 @@ template <int x> struct GCD <0, x> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Naive iterative implementation of finding divisors of number
 template <int N, int i = N> struct FindDiv {
     static constexpr int result = (N%i==0) + FindDiv<N, i-1>::result;  
 };
@@ -73,11 +75,13 @@ template <int N> struct FindDiv<N, 0> {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// IsPrime predicate, using only FindDiv predicate, not really fast
 template <int N> struct IsPrime {
     static const bool result = (FindDiv<N>::result == 2);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Implementation of swap function
 template<class T>
 void swap(T& a, T& b) {
     T helper(std::move(a));
@@ -86,6 +90,7 @@ void swap(T& a, T& b) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Add everything that is int
 template<typename T>
 int addHelper(const T& x)
 {
@@ -111,7 +116,7 @@ int sumInts()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
+// Are two classes same?
 template <int X, int Y> struct isEqual {
     static constexpr bool res = false;
 };
@@ -120,6 +125,16 @@ template <int X> struct isEqual <X, X> {
     static constexpr bool res = true;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class ClassA { };
+class ClassB { };
+class ClassC : ClassB { };
+
+template<typename A, typename B>
+bool isDerivedFrom(A a, B b)
+{
+    return std::is_base_of<B, A>::value;
+}
 
 int main()
 {
@@ -166,5 +181,12 @@ int main()
     cout << "5 and 5 " << (isEqual<5, 5>::res?("is"):("is not")) << " equal" << endl;
     cout << "5 and 8 " << (isEqual<5, 8>::res?("is"):("is not")) << " equal" << endl;
     
+    ClassA fir;
+    ClassB sec;
+    ClassC thi;
+    cout << "ClassA is not derived from ClassB and isDerivedFrom is " << isDerivedFrom(fir, sec) << endl;
+    cout << "ClassB is not derived from ClassC and isDerivedFrom is " << isDerivedFrom(sec, thi) << endl;
+    cout << "ClassC is derived from ClassB and isDerivedFrom is " << isDerivedFrom(thi, sec) << endl;
+
     return 0;
 }

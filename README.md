@@ -15,3 +15,10 @@ Write function that works just like std::midpoint function from numeric. It find
 average rounded to the second parameter.
 
 Author: Tomas Dzetkulic
+
+## Challenge 3
+
+Write a program that validates proove of a logical formula. You have set of axioms
+and modus ponens. This has to be done at a compile time.
+
+Inspiration: lecture of Robert Lukotka
