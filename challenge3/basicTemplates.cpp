@@ -112,6 +112,14 @@ int sumInts()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <int X, int Y> struct isEqual {
+    static constexpr bool res = false;
+};
+
+template <int X> struct isEqual <X, X> {
+    static constexpr bool res = true;
+};
+
 
 int main()
 {
@@ -155,5 +163,8 @@ int main()
     cout << "macka+0.0+1+2 = " << sumInts(0.0, "cat", 1, 2) << endl;
     cout << "7+8+9 = " << sumInts(std::make_unique<int>(7), std::make_unique<int>(8), std::make_unique<int>(9)) << endl;
 
+    cout << "5 and 5 " << (isEqual<5, 5>::res?("is"):("is not")) << " equal" << endl;
+    cout << "5 and 8 " << (isEqual<5, 8>::res?("is"):("is not")) << " equal" << endl;
+    
     return 0;
 }
