@@ -82,23 +82,22 @@ public:
   void finish(int32_t thread) { progress[thread] = INT32_MAX; }
 };
 
-const int32_t number_of_threads = 4;
-SharedPrinter sp(number_of_threads);
-
-void f(int32_t thread_id) {
+void f(int32_t thread_id, SharedPrinter *sp) {
 
   for (int32_t i = 0; i < 10; ++i) {
     std::this_thread::sleep_for(std::chrono::microseconds(1));
-    sp.notify(thread_id, i * i);
+    sp->notify(thread_id, i * i + thread_id);
   }
-  sp.finish(thread_id);
+  sp->finish(thread_id);
 }
 
 int main() {
 
+  const int32_t number_of_threads = 4;
+  SharedPrinter sp(number_of_threads);
   vector<thread> threads;
   for (int32_t i = 0; i < number_of_threads; ++i)
-    threads.push_back(std::thread(f, i));
+    threads.push_back(std::thread(f, i, &sp));
   sp.run();
   for (auto &th : threads)
     th.join();
