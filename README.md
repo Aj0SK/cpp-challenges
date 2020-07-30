@@ -22,3 +22,16 @@ Write a program that validates proove of a logical formula. You have set of axio
 and modus ponens. This has to be done at a compile time.
 
 Inspiration: lecture of Robert Lukotka
+
+## Challenge 4
+
+Write a shared printer. It has to print the progress of several processes once they
+reach a certain levels.
+
+Author: Tomas Dzetkulic
+
+## Challenge 5
+
+Write a program that generates normal distribution in the compile time.
+
+Author: Me
