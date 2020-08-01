@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iomanip>
 #include <limits>
+#include <array>
 #include <type_traits>
 #include <cmath>
 
@@ -11,6 +12,9 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::pair;
+using std::array;
+
+constexpr int kGenerated = 400'000;
 
 constexpr int kLnAccuracy = 10;
 constexpr int kSinCosAccuracy = 10;
@@ -118,26 +122,7 @@ constexpr pair<double, double> generate_normal(double u1, double u2)
     return {first * sin_fast(angle), first * cos_fast(angle)};
 }
 
-constexpr double generate_normals(int n, int seed = 20)
-{
-    double sum = 0;
-    uint32_t state = seed;
-    for(int i=0; i<n; ++i)
-    {
-        double a = 0.0, b = 0.0;
-        state = gen_random(state);
-        a = state;
-        state = gen_random(state);
-        b = state;
 
-        a = get_uniform(a);
-        b = get_uniform(b);
-
-        auto nor = generate_normal(a, b);
-        sum += nor.first + nor.second;
-    }
-    return sum/static_cast<double>(2*n);
-}
 
 constexpr double abs_const(double x)
 {
@@ -161,7 +146,7 @@ void test()
     static_assert(abs_const(cos_fast(0.2) - (0.980066578)) < test_inf, "Problem with sin accuracy.");
     static_assert(abs_const(cos_fast(3.0) - (-0.989992497)) < test_inf, "Problem with sin accuracy.");
 
-    for(double x=0.0; x<100.0; x += 0.01)
+    for(double x=0.0; x<100.0; x += 0.001)
     {
         assert(abs(sqrt_fast(x*x) - x) < test_inf);
     }
@@ -176,16 +161,45 @@ void test()
         assert(abs(cos_fast(x) - cos(x)) < test_inf);
     }
 
-    for(double x=0.0001; x<1.0; x += 0.00001)
+    for(double x=0.00001; x<1.0; x += 0.00001)
     {
         assert(abs(ln_fast(x) - log(x)) < test_inf);
     }
 }
 
+constexpr std::array<double, kGenerated> generate_normals(int seed = 20)
+{
+    std::array<double, kGenerated> arr = {};
+    uint32_t state = seed;
+    for(int i=0; i<kGenerated; i += 2)
+    {
+        double a = 0.0, b = 0.0;
+        state = gen_random(state);
+        a = state;
+        state = gen_random(state);
+        b = state;
+
+        a = get_uniform(a);
+        b = get_uniform(b);
+
+        //arr[i] = a;
+        //arr[i+1] = b;
+
+        auto nor = generate_normal(a, b);
+        arr[i] = nor.first;
+        arr[i+1] = nor.second;
+    }
+    return arr;
+}
 int main()
 {
     test();
-    constexpr double mean = generate_normals(100'000);
-    cout << std::fixed << std::setprecision(10) << "Mean is " << mean << endl;
+
+    constexpr std::array<double, kGenerated> gen = generate_normals();
+
+    for(const double x : gen)
+    {
+        std::cout << x << "\n";
+    }
     return 0;
 }
